@@ -10,7 +10,8 @@ export const GlobalStyles = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
-    background-color: ${({ theme }) => theme.colors.white};
+    background: linear-gradient(to right, #0C0B1E, #2A0F3B, #0C0B1E);
+
   }
 
   #__next {
@@ -21,6 +22,7 @@ export const GlobalStyles = createGlobalStyle`
 
   p {
     margin: 0;
+    color: ${(props) => props.theme.colors.white};
   }
 
   h1,
@@ -30,6 +32,12 @@ export const GlobalStyles = createGlobalStyle`
   h5,
   h6 {
     margin: 0;
+    color: ${(props) => props.theme.colors.white};
+  }
+  
+  label,
+  span {
+    color: ${(props) => props.theme.colors.white};
   }
 
   ul,
@@ -37,6 +45,15 @@ export const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  
+  input {
+    margin: 0;
+    padding: 0;
+  }
+  
+  button {
+    border: none;
   }
 
   a {
