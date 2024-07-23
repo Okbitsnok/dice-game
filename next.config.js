@@ -8,3 +8,8 @@ module.exports = {
     return config;
   },
 };
+
+module.exports = {
+  output: 'export',
+  trailingSlash: true,
+}
