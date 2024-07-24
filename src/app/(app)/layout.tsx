@@ -1,20 +1,19 @@
 "use client";
 
 import { useState, PropsWithChildren, useEffect } from "react";
-import { SessionProvider, useSession, signOut } from "next-auth/react";
 import { S } from "./index.styled";
 import { BalanceProvider, useBalance } from "@/providers/BalanceContext";
 import AuthModal from "@/components/Modal/AuthModal/AuthModal";
-import LogoutIcon from "@/assets/icons/logout.svg";
 import { convertToNumberWithSpaces } from "@/utils/convertToNumberWithSpaces";
+import axios from "axios";
 
 export type LayoutProps = {};
 
 const Header = ({
-  session,
+  user,
   setAuthModalOpen,
 }: {
-  session: any;
+  user: any;
   setAuthModalOpen: (open: boolean) => void;
 }) => {
   const { balance } = useBalance();
@@ -23,14 +22,11 @@ const Header = ({
     <S.NavWrap>
       <S.Logo>Test Game</S.Logo>
       <S.Header>
-        {session ? (
+        {user ? (
           <>
             <S.Balance>
               {`${convertToNumberWithSpaces(String(balance))} (TND)`}
             </S.Balance>
-            <S.LogoutButton onClick={() => signOut()}>
-              <LogoutIcon />
-            </S.LogoutButton>
           </>
         ) : (
           <S.SignInButton onClick={() => setAuthModalOpen(true)}>
@@ -44,46 +40,50 @@ const Header = ({
 
 export default function Layout({ children }: PropsWithChildren) {
   const [isAuthModalOpen, setAuthModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.lettobet.dev.bet4skill.com/api/auth/me",
+          { withCredentials: true },
+        );
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   return (
-    <SessionProvider>
-      <BalanceProvider>
-        <S.Container>
-          <HeaderWithSession setAuthModalOpen={setAuthModalOpen} />
-          <S.ContentWrap>
-            <ContentWithSession isAuthModalOpen={isAuthModalOpen}>
-              {children}
-            </ContentWithSession>
-          </S.ContentWrap>
-        </S.Container>
+    <BalanceProvider>
+      <S.Container>
+        <Header user={user} setAuthModalOpen={setAuthModalOpen} />
+        <S.ContentWrap>
+          <ContentWithSession isAuthModalOpen={isAuthModalOpen} user={user}>
+            {children}
+          </ContentWithSession>
+        </S.ContentWrap>
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setAuthModalOpen(false)}
         />
-      </BalanceProvider>
-    </SessionProvider>
+      </S.Container>
+    </BalanceProvider>
   );
 }
-
-const HeaderWithSession = ({
-  setAuthModalOpen,
-}: {
-  setAuthModalOpen: (open: boolean) => void;
-}) => {
-  const { data: session } = useSession();
-
-  return <Header session={session} setAuthModalOpen={setAuthModalOpen} />;
-};
 
 const ContentWithSession = ({
   children,
   isAuthModalOpen,
-}: PropsWithChildren<{ isAuthModalOpen: boolean }>) => {
-  const { data: session } = useSession();
-
+  user,
+}: PropsWithChildren<{ isAuthModalOpen: boolean; user: any }>) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!session && !isAuthModalOpen) {
+      if (!user && !isAuthModalOpen) {
         event.preventDefault();
       }
     };
@@ -92,9 +92,9 @@ const ContentWithSession = ({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [session, isAuthModalOpen]);
+  }, [user, isAuthModalOpen]);
 
   return (
-    <S.Content isDisabled={!session && !isAuthModalOpen}>{children}</S.Content>
+    <S.Content isDisabled={!user && !isAuthModalOpen}>{children}</S.Content>
   );
 };

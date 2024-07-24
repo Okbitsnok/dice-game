@@ -1,18 +1,21 @@
 {
-  "name": "jelly-belly-project",
+  "name": "dice-game-project",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prebuild": "npm run lint",
+    "export": "next build && next export"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@svgr/webpack": "^8.1.0",
     "@types/styled-components": "^5.1.34",
     "axios": "^1.7.2",
+    "js-cookie": "^3.0.5",
     "next": "^14.2.4",
     "next-auth": "^4.24.7",
     "prettier": "^3.3.2",
@@ -27,6 +30,8 @@
     "@types/node": "20.14.9",
     "@types/react": "18.3.3",
     "babel-plugin-styled-components": "^2.1.4",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.5",
     "typescript": "5.5.3"
   }
 }

@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { signIn } from "next-auth/react";
 import ModalBase from "../ModalBase/ModalBase";
 import * as S from "./index.styled";
 import { useState } from "react";
 import LoaderIcon from "@/assets/icons/loader.svg";
+import axios from "axios";
 
 const schema = yup.object().shape({
   login: yup.string().required("Login is required"),
@@ -32,21 +32,31 @@ const AuthModal = ({
 
   const onSubmit = async (data: { login: string; password: string }) => {
     setLoading(true);
-    const result = await signIn("credentials", {
-      redirect: false,
-      login: data.login,
-      password: data.password,
-    });
+    try {
+      const response = await axios.post(
+        "https://api.lettobet.dev.bet4skill.com/api/client-login",
+        {
+          login: data.login,
+          password: data.password,
+        },
+        {
+          withCredentials: true,
+        },
+      );
 
-    if (result?.ok) {
-      onClose();
-    } else {
+      if (response.status === 200) {
+        onClose();
+        window.location.reload();
+      } else {
+        alert("Failed to sign in");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       alert("Failed to sign in");
+    } finally {
+      reset();
+      setLoading(false);
     }
-
-    onClose();
-    reset();
-    setLoading(false);
   };
 
   if (!isOpen) return null;
