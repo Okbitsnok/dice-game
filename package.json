@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prebuild": "npm run lint",
-    "export": "next build && next export"
+    "prebuild": "npm run lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

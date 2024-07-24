@@ -9,8 +9,9 @@
 //   },
 // };
 
-module.exports = {
-  output: 'export',
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "export",
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
@@ -21,3 +22,5 @@ module.exports = {
   },
   trailingSlash: true,
 };
+
+module.exports = nextConfig;
