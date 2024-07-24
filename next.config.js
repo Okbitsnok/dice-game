@@ -7,8 +7,6 @@ module.exports = {
 
     return config;
   },
+  output: 'export',
 };
 
-module.exports = {
-  output: 'export',
-}
